@@ -35,8 +35,8 @@ public class PlayerActionManager {
         Objects.requireNonNull(action, "Action cannot be null");
 
         skillManager.getSkills().stream()
-                .filter(skill -> skill.canExecute(player))
                 .filter(skill -> test(skill, player, action))
+                .filter(skill -> skill.canExecute(player))
                 .forEach(skill ->
                         Bukkit.getScheduler().runTask(plugin, () -> {
                             try {
