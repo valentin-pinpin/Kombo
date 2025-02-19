@@ -1,0 +1,50 @@
+package dev.pingui.kombo.skill;
+
+import dev.pingui.kombo.combo.Combo;
+import org.bukkit.entity.Player;
+
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
+public class SkillBuilder {
+
+    private final String id;
+    private final Combo combo;
+    private Predicate<Player> predicate;
+    private Consumer<Player> consumer;
+
+    public SkillBuilder(String id, Combo combo) {
+        this.id = Objects.requireNonNull(id, "Id cannot be null");
+        this.combo = Objects.requireNonNull(combo, "Combo cannot be null");
+        this.predicate = player -> true;
+        this.consumer = player -> {};
+    }
+
+    public SkillBuilder predicate(Predicate<Player> predicate) {
+        this.predicate = Objects.requireNonNull(predicate, "Predicate cannot be null");
+        return this;
+    }
+
+    public SkillBuilder consumer(Consumer<Player> consumer) {
+        this.consumer = Objects.requireNonNull(consumer, "Consumer cannot be null");
+        return this;
+    }
+
+    public Skill build() {
+        return new AbstractSkill(id, combo) {
+
+            @Override
+            public boolean canExecute(Player player) {
+                return predicate.test(player);
+            }
+
+            @Override
+            public void execute(Player player) {
+                if (canExecute(player)) {
+                    consumer.accept(player);
+                }
+            }
+        };
+    }
+}

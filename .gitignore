@@ -1,0 +1,12 @@
+.idea/
+
+*.iml
+*.log
+*.out
+
+/target/
+/out/
+
+/node_modules/
+/.gradle/
+/.mvn/
