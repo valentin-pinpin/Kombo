@@ -71,7 +71,8 @@ public final class KomboPlugin extends JavaPlugin {
                         .appendAction(ActionType.SNEAK, ActionState.STARTED)
                         .appendAction(ActionType.JUMP, ActionState.STARTED)
                         .build())
-                .predicate(player -> player.hasPermission("kombo.admin"))
+                .permission("kombo.admin")
+                .predicate(player -> player.getGameMode() == GameMode.CREATIVE)
                 .consumer(player -> getLogger().info("test ok"))
                 .build();
         skillManager.addSkill(skill);

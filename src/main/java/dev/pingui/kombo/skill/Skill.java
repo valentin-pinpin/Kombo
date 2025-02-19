@@ -9,6 +9,8 @@ public interface Skill {
 
     Combo combo();
 
+    String permission();
+
     default boolean canExecute(Player player) {
         return true;
     }
