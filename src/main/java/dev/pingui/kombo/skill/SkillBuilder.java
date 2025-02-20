@@ -39,7 +39,7 @@ public class SkillBuilder {
     }
 
     public Skill build() {
-        return new AbstractSkill(id, combo, permission) {
+        return new AbstractSkill(id, permission, combo) {
 
             @Override
             public boolean canExecute(Player player) {
