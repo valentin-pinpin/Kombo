@@ -49,8 +49,9 @@ public class PlayerActionManager {
     }
 
     private Cache<UUID, ComboState> getOrCreateCache(Skill skill) {
+        Duration expiration = Duration.ofMillis(skill.combo().maxActionDelay());
         return cacheSkill.computeIfAbsent(skill.id(), id -> CacheBuilder.newBuilder()
-                .expireAfterWrite(Duration.ofMillis(skill.combo().maxActionDelay()))
+                .expireAfterWrite(expiration)
                 .build());
     }
 
