@@ -73,6 +73,10 @@ public class PlayerActionManager {
     private ActionResult validateAction(Combo combo, ComboState state, Action action) {
         List<Action> actions = combo.actions();
 
+        if (state.currentIndex() >= actions.size()) {
+            return ActionResult.INVALID_ACTION_STRICT;
+        }
+
         if (!actions.get(state.currentIndex()).equals(action)) {
             return combo.strict() ? ActionResult.INVALID_ACTION_STRICT : ActionResult.INVALID_ACTION;
         }
