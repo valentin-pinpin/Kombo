@@ -72,7 +72,7 @@ public final class MovementPacketHandler implements Listener {
     private void updateActionState(Player player, Direction direction) {
         Cache<Direction, Long> cache = caches.computeIfAbsent(player, this::createMovementCache);
 
-        Direction opposite = direction.opposite();
+        Direction opposite = direction.oppositeDirection();
         Long oppositeTime = cache.getIfPresent(opposite);
 
         if (oppositeTime != null) {
