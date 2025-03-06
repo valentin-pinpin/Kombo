@@ -107,8 +107,8 @@ public class PlayerActionManager {
         INVALID_ACTION,
         INVALID_ACTION_STRICT,
         TOO_EARLY,
-        COMPLETED,
-        NEXT_STEP;
+        NEXT_STEP,
+        COMPLETED;
 
         public boolean isCompleted() {
             return this == COMPLETED;
