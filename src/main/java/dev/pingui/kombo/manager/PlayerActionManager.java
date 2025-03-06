@@ -34,7 +34,7 @@ public class PlayerActionManager {
         Objects.requireNonNull(player, "Player cannot be null");
         Objects.requireNonNull(action, "Action cannot be null");
 
-        skillManager.getSkills().stream()
+        skillManager.skills().stream()
                 .filter(skill -> player.hasPermission(skill.permission()))
                 .filter(skill -> test(skill, player, action))
                 .filter(skill -> skill.canExecute(player))

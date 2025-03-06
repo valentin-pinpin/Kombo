@@ -23,7 +23,7 @@ public class SkillManager {
         skills.putIfAbsent(skill.id(), skill);
     }
 
-    public Collection<Skill> getSkills() {
+    public Collection<Skill> skills() {
         return List.copyOf(skills.values());
     }
 }
