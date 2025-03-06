@@ -39,14 +39,17 @@ public class PlayerActionManager {
                 .filter(skill -> player.hasPermission(skill.permission()))
                 .filter(skill -> test(skill, player, action))
                 .filter(skill -> skill.canExecute(player))
-                .forEach(skill ->
-                        Bukkit.getScheduler().runTask(plugin, () -> {
-                            try {
-                                skill.execute(player);
-                            } catch (Exception e) {
-                                plugin.getLogger().log(Level.SEVERE, "Error executing skill " + skill.id() + " for player " + player.getName(), e);
-                            }
-                        }));
+                .forEach(skill -> executeSkill(player, skill));
+    }
+
+    private void executeSkill(Player player, Skill skill) {
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            try {
+                skill.execute(player);
+            } catch (Exception e) {
+                plugin.getLogger().log(Level.SEVERE, "Error executing skill " + skill.id() + " for player " + player.getName(), e);
+            }
+        });
     }
 
     private Cache<UUID, ComboState> getOrCreateCache(Skill skill) {
