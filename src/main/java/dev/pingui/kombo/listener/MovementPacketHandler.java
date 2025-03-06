@@ -4,38 +4,37 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import dev.pingui.kombo.action.ActionState;
 import dev.pingui.kombo.manager.PlayerActionManager;
 import dev.pingui.kombo.KomboPlugin;
 import dev.pingui.kombo.action.ActionType;
 import dev.pingui.kombo.util.Direction;
 import dev.pingui.kombo.util.MovementUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 public final class MovementPacketHandler implements Listener {
 
-    private final Map<Player, Cache<Direction, Long>> caches;
+    private final Map<Player, Map<Direction, BukkitTask>> tasks;
     private final PlayerActionManager actionManager;
 
     public MovementPacketHandler(PlayerActionManager actionManager) {
         this.actionManager = Objects.requireNonNull(actionManager, "ActionManager cannot be null");
-        this.caches = new ConcurrentHashMap<>();
+        this.tasks = new ConcurrentHashMap<>();
     }
 
     public PacketAdapter getPacketAdapter() {
-        return new PacketAdapter(KomboPlugin.inst(), PacketType.Play.Client.POSITION) {
+        return new PacketAdapter(KomboPlugin.inst(), PacketType.Play.Client.POSITION, PacketType.Play.Client.POSITION_LOOK) {
 
             @Override
             public void onPacketReceiving(PacketEvent event) {
@@ -60,35 +59,36 @@ public final class MovementPacketHandler implements Listener {
         };
     }
 
-    private Cache<Direction, Long> createMovementCache(Player player) {
-        return CacheBuilder.newBuilder()
-                .expireAfterWrite(100, TimeUnit.MILLISECONDS)
-                .removalListener(notification -> {
-                    ActionType type = ActionType.fromDirection((Direction) notification.getKey());
-                    actionManager.playerAction(player, type, ActionState.STOPPED);
-                }).build();
-    }
-
     private void updateActionState(Player player, Direction direction) {
-        Cache<Direction, Long> cache = caches.computeIfAbsent(player, this::createMovementCache);
+        Map<Direction, BukkitTask> playerTasks = tasks.computeIfAbsent(player, k -> new ConcurrentHashMap<>());
+        ActionType type = ActionType.fromDirection(direction);
+
+        if (!playerTasks.containsKey(direction)) {
+            actionManager.playerAction(player, type, ActionState.STARTED);
+        } else {
+            playerTasks.get(direction).cancel();
+        }
+
+        BukkitTask task = Bukkit.getScheduler().runTaskLater(KomboPlugin.inst(), () -> {
+            actionManager.playerAction(player, type, ActionState.STOPPED);
+            playerTasks.remove(direction);
+        }, 2);
+
+        playerTasks.put(direction, task);
 
         Direction opposite = direction.oppositeDirection();
-        Long oppositeTime = cache.getIfPresent(opposite);
-
-        if (oppositeTime != null) {
-            cache.invalidate(opposite);
+        BukkitTask oppositeTask = playerTasks.remove(opposite);
+        if (oppositeTask != null) {
+            oppositeTask.cancel();
+            actionManager.playerAction(player, ActionType.fromDirection(opposite), ActionState.STOPPED);
         }
-
-        if (cache.getIfPresent(direction) == null) {
-            ActionType type = ActionType.fromDirection(direction);
-            actionManager.playerAction(player, type, ActionState.STARTED);
-        }
-
-        cache.put(direction, System.currentTimeMillis());
     }
 
     public void clearPlayerCache(Player player) {
-        caches.remove(Objects.requireNonNull(player, "Player cannot be null"));
+        Map<Direction, BukkitTask> playerTasks = tasks.remove(player);
+        if (playerTasks != null) {
+            playerTasks.values().forEach(BukkitTask::cancel);
+        }
     }
 
     @EventHandler
