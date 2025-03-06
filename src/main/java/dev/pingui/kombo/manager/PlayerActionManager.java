@@ -109,20 +109,14 @@ public class PlayerActionManager {
 
     private enum ActionResult {
 
-        INVALID_ACTION(false),
-        INVALID_ACTION_STRICT(false),
-        TOO_EARLY(false),
-        COMPLETED(true),
-        NEXT_STEP(false);
-
-        private final boolean completed;
-
-        ActionResult(boolean completed) {
-            this.completed = completed;
-        }
+        INVALID_ACTION,
+        INVALID_ACTION_STRICT,
+        TOO_EARLY,
+        COMPLETED,
+        NEXT_STEP;
 
         public boolean isCompleted() {
-            return completed;
+            return this == COMPLETED;
         }
     }
 }
