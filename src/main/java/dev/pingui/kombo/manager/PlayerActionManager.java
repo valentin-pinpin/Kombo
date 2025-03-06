@@ -13,6 +13,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.logging.Level;
 
 public class PlayerActionManager {
 
@@ -43,7 +44,7 @@ public class PlayerActionManager {
                             try {
                                 skill.execute(player);
                             } catch (Exception e) {
-                                plugin.getLogger().severe("Error executing skill " + skill.id() + " for player " + player.getName() + ": " + e.getMessage());
+                                plugin.getLogger().log(Level.SEVERE, "Error executing skill " + skill.id() + " for player " + player.getName(), e);
                             }
                         }));
     }
