@@ -67,8 +67,9 @@ public class PlayerActionManager {
         }
 
         ActionResult result = validateAction(combo, state, action);
+        updateCache(cache, playerId, result, state);
 
-        return updateCache(cache, playerId, result, state);
+        return result.isCompleted();
     }
 
     private ActionResult validateAction(Combo combo, ComboState state, Action action) {
@@ -89,20 +90,13 @@ public class PlayerActionManager {
         return (state.currentIndex() + 1 >= actions.size()) ? ActionResult.COMPLETED : ActionResult.NEXT_STEP;
     }
 
-    private boolean updateCache(Cache<UUID, ComboState> cache, UUID playerId, ActionResult result, ComboState state) {
+    private void updateCache(Cache<UUID, ComboState> cache, UUID playerId, ActionResult result, ComboState state) {
         switch (result) {
-            case INVALID_ACTION_STRICT, COMPLETED -> {
-                cache.invalidate(playerId);
-                return result.isCompleted();
-            }
-            case INVALID_ACTION, TOO_EARLY -> {
-                return result.isCompleted();
-            }
+            case INVALID_ACTION_STRICT, COMPLETED -> cache.invalidate(playerId);
             case NEXT_STEP -> {
-                cache.put(playerId, new ComboState(state.currentIndex() + 1, System.currentTimeMillis()));
-                return result.isCompleted();
+                ComboState newState = new ComboState(state.currentIndex() + 1, System.currentTimeMillis());
+                cache.put(playerId, newState);
             }
-            default -> throw new IllegalStateException("Unexpected value: " + result);
         }
     }
 
