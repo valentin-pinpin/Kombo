@@ -66,7 +66,7 @@ public class PlayerActionManager {
 
         ComboStep step = cache.getIfPresent(playerId);
         if (step == null) {
-            step = new ComboStep(0, 0L);
+            step = ComboStep.ZERO;
         }
 
         ActionResult result = validateAction(combo, step, action);
@@ -101,6 +101,8 @@ public class PlayerActionManager {
     }
 
     private record ComboStep(int index, long executedAt) {
+
+        public static final ComboStep ZERO = new ComboStep(0, 0L);
 
         public ComboStep next() {
             return new ComboStep(index + 1, System.currentTimeMillis());
