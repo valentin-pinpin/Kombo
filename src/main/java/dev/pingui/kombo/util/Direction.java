@@ -8,7 +8,7 @@ public enum Direction {
     RIGHT,
     UNKNOWN;
 
-    public Direction oppositeDirection() {
+    public Direction opposite() {
         return switch (this) {
             case FORWARD -> BACKWARD;
             case BACKWARD -> FORWARD;

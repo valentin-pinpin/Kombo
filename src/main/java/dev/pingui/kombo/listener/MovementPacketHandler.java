@@ -76,7 +76,7 @@ public final class MovementPacketHandler implements Listener {
 
         playerTasks.put(direction, task);
 
-        Direction opposite = direction.oppositeDirection();
+        Direction opposite = direction.opposite();
         BukkitTask oppositeTask = playerTasks.remove(opposite);
         if (oppositeTask != null) {
             oppositeTask.cancel();
