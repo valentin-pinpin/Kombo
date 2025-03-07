@@ -19,7 +19,7 @@ public class PlayerActionManager {
 
     private final Plugin plugin;
     private final SkillManager skillManager;
-    private final Map<String, Cache<UUID, ComboState>> cacheSkill;
+    private final Map<String, Cache<UUID, ComboStep>> cacheSkill;
 
     public PlayerActionManager(Plugin plugin, SkillManager skillManager) {
         this.plugin = Objects.requireNonNull(plugin, "Plugin cannot be null");
@@ -52,7 +52,7 @@ public class PlayerActionManager {
         });
     }
 
-    private Cache<UUID, ComboState> getOrCreateCache(Skill skill) {
+    private Cache<UUID, ComboStep> getOrCreateCache(Skill skill) {
         Duration expiration = Duration.ofMillis(skill.combo().maxActionDelay());
         return cacheSkill.computeIfAbsent(skill.id(), id -> CacheBuilder.newBuilder()
                 .expireAfterWrite(expiration)
@@ -61,49 +61,51 @@ public class PlayerActionManager {
 
     private boolean test(Skill skill, Player player, Action action) {
         UUID playerId = player.getUniqueId();
-        Cache<UUID, ComboState> cache = getOrCreateCache(skill);
+        Cache<UUID, ComboStep> cache = getOrCreateCache(skill);
         Combo combo = skill.combo();
 
-        ComboState state = cache.getIfPresent(playerId);
-        if (state == null) {
-            state = new ComboState(0, 0L);
+        ComboStep step = cache.getIfPresent(playerId);
+        if (step == null) {
+            step = new ComboStep(0, 0L);
         }
 
-        ActionResult result = validateAction(combo, state, action);
-        updateCache(cache, playerId, result, state);
+        ActionResult result = validateAction(combo, step, action);
+        updateCache(cache, playerId, result, step);
 
         return result.isCompleted();
     }
 
-    private ActionResult validateAction(Combo combo, ComboState state, Action action) {
+    private ActionResult validateAction(Combo combo, ComboStep step, Action action) {
         List<Action> actions = combo.actions();
 
-        if (state.currentIndex() >= actions.size()) {
+        if (step.index() >= actions.size()) {
             return ActionResult.INVALID_ACTION_STRICT;
         }
 
-        if (!actions.get(state.currentIndex()).equals(action)) {
+        if (!actions.get(step.index()).equals(action)) {
             return combo.strict() ? ActionResult.INVALID_ACTION_STRICT : ActionResult.INVALID_ACTION;
         }
 
-        if (state.lastActionTime() > 0 && (System.currentTimeMillis() - state.lastActionTime()) < combo.minActionDelay()) {
+        if (step.executedAt() > 0 && (System.currentTimeMillis() - step.executedAt()) < combo.minActionDelay()) {
             return ActionResult.TOO_EARLY;
         }
 
-        return (state.currentIndex() + 1 >= actions.size()) ? ActionResult.COMPLETED : ActionResult.NEXT_STEP;
+        return (step.index() + 1 >= actions.size()) ? ActionResult.COMPLETED : ActionResult.NEXT_STEP;
     }
 
-    private void updateCache(Cache<UUID, ComboState> cache, UUID playerId, ActionResult result, ComboState state) {
+    private void updateCache(Cache<UUID, ComboStep> cache, UUID playerId, ActionResult result, ComboStep step) {
         switch (result) {
             case INVALID_ACTION_STRICT, COMPLETED -> cache.invalidate(playerId);
-            case NEXT_STEP -> {
-                ComboState newState = new ComboState(state.currentIndex() + 1, System.currentTimeMillis());
-                cache.put(playerId, newState);
-            }
+            case NEXT_STEP -> cache.put(playerId, step.next());
         }
     }
 
-    private record ComboState(int currentIndex, long lastActionTime) { }
+    private record ComboStep(int index, long executedAt) {
+
+        public ComboStep next() {
+            return new ComboStep(index + 1, System.currentTimeMillis());
+        }
+    }
 
     private enum ActionResult {
 
