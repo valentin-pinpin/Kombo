@@ -1,19 +1,14 @@
 package dev.pingui.kombo.skill;
 
-import dev.pingui.kombo.combo.Combo;
 import org.bukkit.entity.Player;
 
 public interface Skill {
 
-    String id();
+    SkillData data();
 
-    String permission();
-
-    Combo combo();
-
-    default boolean canExecute(Player player) {
+    default boolean canPerform(Player player) {
         return true;
     }
 
-    void execute(Player player);
+    void perform(Player player);
 }

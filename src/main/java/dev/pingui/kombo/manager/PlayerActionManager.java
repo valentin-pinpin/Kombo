@@ -36,25 +36,25 @@ public class PlayerActionManager {
         Objects.requireNonNull(action, "Action cannot be null");
 
         skillManager.skills().stream()
-                .filter(skill -> player.hasPermission(skill.permission()))
+                .filter(skill -> player.hasPermission(skill.data().permission()))
                 .filter(skill -> test(skill, player, action))
-                .filter(skill -> skill.canExecute(player))
+                .filter(skill -> skill.canPerform(player))
                 .forEach(skill -> executeSkill(player, skill));
     }
 
     private void executeSkill(Player player, Skill skill) {
         Bukkit.getScheduler().runTask(plugin, () -> {
             try {
-                skill.execute(player);
+                skill.perform(player);
             } catch (Exception e) {
-                plugin.getLogger().log(Level.SEVERE, "Error executing skill " + skill.id() + " for player " + player.getName(), e);
+                plugin.getLogger().log(Level.SEVERE, "Error executing skill " + skill.data().id() + " for player " + player.getName(), e);
             }
         });
     }
 
     private Cache<UUID, ComboStep> getOrCreateCache(Skill skill) {
-        Duration expiration = Duration.ofMillis(skill.combo().maxActionDelay());
-        return cacheSkill.computeIfAbsent(skill.id(), id -> CacheBuilder.newBuilder()
+        Duration expiration = Duration.ofMillis(skill.data().combo().maxActionDelay());
+        return cacheSkill.computeIfAbsent(skill.data().id(), id -> CacheBuilder.newBuilder()
                 .expireAfterWrite(expiration)
                 .build());
     }
@@ -62,7 +62,7 @@ public class PlayerActionManager {
     private boolean test(Skill skill, Player player, Action action) {
         UUID playerId = player.getUniqueId();
         Cache<UUID, ComboStep> cache = getOrCreateCache(skill);
-        Combo combo = skill.combo();
+        Combo combo = skill.data().combo();
 
         ComboStep step = cache.getIfPresent(playerId);
         if (step == null) {

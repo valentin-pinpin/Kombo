@@ -20,7 +20,7 @@ public class SkillManager {
 
     public void addSkill(Skill skill) {
         Objects.requireNonNull(skill, "Skill cannot be null");
-        skills.putIfAbsent(skill.id(), skill);
+        skills.putIfAbsent(skill.data().id(), skill);
     }
 
     public Collection<Skill> skills() {
