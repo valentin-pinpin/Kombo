@@ -2,8 +2,6 @@ package dev.pingui.kombo.manager;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import dev.pingui.kombo.input.InputState;
-import dev.pingui.kombo.input.InputType;
 import dev.pingui.kombo.input.Input;
 import dev.pingui.kombo.skill.Skill;
 import dev.pingui.kombo.combo.Combo;
@@ -28,11 +26,7 @@ public class PlayerInputManager {
         this.cacheSkill = new ConcurrentHashMap<>();
     }
 
-    public void playerInput(Player player, InputType type, InputState state) {
-        playerInput(player, new Input(type, state));
-    }
-
-    public void playerInput(Player player, Input input) {
+    public void handlePlayerInput(Player player, Input input) {
         Objects.requireNonNull(player, "Player cannot be null");
         Objects.requireNonNull(input, "Input cannot be null");
 

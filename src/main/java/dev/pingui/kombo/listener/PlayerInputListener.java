@@ -31,7 +31,7 @@ public class PlayerInputListener implements Listener {
         org.bukkit.Input previous = previousInputs.get(player.getUniqueId());
 
         if (previous != null) {
-            compare(current, previous).forEach(input -> actionManager.playerInput(player, input));
+            compare(current, previous).forEach(input -> actionManager.handlePlayerInput(player, input));
         }
 
         previousInputs.put(player.getUniqueId(), current);
