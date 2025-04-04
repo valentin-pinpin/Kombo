@@ -30,11 +30,11 @@ public class Combo {
         return maxInputDelay;
     }
 
-    public long minSequenceDuration() {
+    public long minComboDuration() {
         return minInputDelay * inputs.size();
     }
 
-    public long maxSequenceDuration() {
+    public long maxComboDuration() {
         return maxInputDelay * inputs.size();
     }
 
