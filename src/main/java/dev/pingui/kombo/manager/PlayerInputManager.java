@@ -34,6 +34,7 @@ public class PlayerInputManager {
                 .filter(skill -> player.hasPermission(skill.data().permission()))
                 .filter(skill -> matchComboStep(skill, player, input))
                 .filter(skill -> skill.canPerform(player))
+                .sorted(Comparator.comparingInt(skill -> skill.data().priority()))
                 .forEach(skill -> executeSkill(player, skill));
     }
 
