@@ -14,7 +14,7 @@ public enum Direction {
             case BACKWARD -> FORWARD;
             case LEFT -> RIGHT;
             case RIGHT -> LEFT;
-            case UNKNOWN -> UNKNOWN;
+            default -> UNKNOWN;
         };
     }
 }

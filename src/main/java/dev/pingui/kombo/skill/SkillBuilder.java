@@ -11,14 +11,28 @@ public class SkillBuilder {
 
     private final String id;
     private final Combo combo;
+    private String description;
+    private String permission;
     private Predicate<Player> predicate;
     private Consumer<Player> consumer;
 
     public SkillBuilder(String id, Combo combo) {
         this.id = Objects.requireNonNull(id, "Id cannot be null");
         this.combo = Objects.requireNonNull(combo, "Combo cannot be null");
+        this.description = "";
+        this.permission = "";
         this.predicate = player -> true;
         this.consumer = player -> {};
+    }
+
+    public SkillBuilder description(String description) {
+        this.description = Objects.requireNonNull(description, "Description cannot be null");
+        return this;
+    }
+
+    public SkillBuilder permission(String permission) {
+        this.permission = Objects.requireNonNull(permission, "Permission cannot be null");
+        return this;
     }
 
     public SkillBuilder predicate(Predicate<Player> predicate) {
@@ -32,18 +46,17 @@ public class SkillBuilder {
     }
 
     public Skill build() {
-        return new AbstractSkill(id, combo) {
+        SkillData data = new SkillData(id, description, permission, combo);
+        return new AbstractSkill(data) {
 
             @Override
-            public boolean canExecute(Player player) {
+            public boolean canPerform(Player player) {
                 return predicate.test(player);
             }
 
             @Override
-            public void execute(Player player) {
-                if (canExecute(player)) {
-                    consumer.accept(player);
-                }
+            public void perform(Player player) {
+                consumer.accept(player);
             }
         };
     }

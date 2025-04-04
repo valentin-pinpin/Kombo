@@ -42,7 +42,7 @@ public enum ActionType {
             case BACKWARD -> MOVE_BACKWARD;
             case LEFT -> MOVE_LEFT;
             case RIGHT -> MOVE_RIGHT;
-            case UNKNOWN -> UNKNOWN;
+            default -> UNKNOWN;
         };
     }
 }
