@@ -2,5 +2,4 @@ name: Kombo
 version: '${project.version}'
 main: dev.pingui.kombo.KomboPlugin
 author: Pingui
-api-version: '1.18'
-depend: [ ProtocolLib ]
+api-version: '1.21'
