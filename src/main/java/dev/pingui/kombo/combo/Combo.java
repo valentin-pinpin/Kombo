@@ -60,18 +60,18 @@ public class Combo {
             this.strict = false;
         }
 
-        public Builder appendInput(InputType inputType) {
-            return appendInput(inputType, InputState.PRESSED)
-                    .appendInput(inputType, InputState.RELEASED);
+        public Builder input(InputType inputType) {
+            return input(inputType, InputState.PRESSED)
+                    .input(inputType, InputState.RELEASED);
         }
 
-        public Builder appendInput(InputType inputType, InputState inputState) {
+        public Builder input(InputType inputType, InputState inputState) {
             Objects.requireNonNull(inputType, "InputType cannot be null");
             Objects.requireNonNull(inputState, "InputState cannot be null");
-            return appendInput(new Input(inputType, inputState));
+            return input(new Input(inputType, inputState));
         }
 
-        public Builder appendInput(Input input) {
+        public Builder input(Input input) {
             Objects.requireNonNull(input, "Input cannot be null");
             inputs.add(input);
             return this;
