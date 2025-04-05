@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import dev.pingui.kombo.combo.Combo;
 import dev.pingui.kombo.input.Input;
 import dev.pingui.kombo.skill.Skill;
+import dev.pingui.kombo.skill.SkillData;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
@@ -23,9 +24,10 @@ public class ComboProgressManager {
 
     public boolean updateProgress(Player player, Skill skill, Input input) {
         UUID playerId = player.getUniqueId();
-        Combo combo = skill.data().combo();
+        SkillData data = skill.data();
+        Combo combo = data.combo();
+        Cache<UUID, ComboStep> cache = getOrCreateCache(data.id(), combo.maxInputDelay());
 
-        Cache<UUID, ComboStep> cache = getOrCreateCache(skill);
         ComboStep step = cache.getIfPresent(playerId);
         if (step == null) {
             step = ComboStep.ZERO;
@@ -37,9 +39,9 @@ public class ComboProgressManager {
         return result.isCompleted();
     }
 
-    private Cache<UUID, ComboStep> getOrCreateCache(Skill skill) {
-        Duration expiration = Duration.ofMillis(skill.data().combo().maxInputDelay());
-        return skillComboCaches.computeIfAbsent(skill.data().id(), id -> CacheBuilder.newBuilder()
+    private Cache<UUID, ComboStep> getOrCreateCache(String skillId, long maxDelay) {
+        Duration expiration = Duration.ofMillis(maxDelay);
+        return skillComboCaches.computeIfAbsent(skillId, id -> CacheBuilder.newBuilder()
                 .expireAfterWrite(expiration)
                 .build());
     }
