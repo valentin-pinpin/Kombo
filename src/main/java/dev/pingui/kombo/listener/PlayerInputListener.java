@@ -15,11 +15,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings("experimental")
 public class PlayerInputListener implements Listener {
 
-    private final PlayerInputManager actionManager;
+    private final PlayerInputManager playerInputManager;
     private final Map<UUID, org.bukkit.Input> previousInputs;
 
-    public PlayerInputListener(PlayerInputManager actionManager) {
-        this.actionManager = Objects.requireNonNull(actionManager, "ActionManager cannot be null");
+    public PlayerInputListener(PlayerInputManager playerInputManager) {
+        this.playerInputManager = Objects.requireNonNull(playerInputManager, "PlayerInputManager cannot be null");
         this.previousInputs = new ConcurrentHashMap<>();
     }
 
@@ -31,7 +31,7 @@ public class PlayerInputListener implements Listener {
         org.bukkit.Input previous = previousInputs.get(player.getUniqueId());
 
         if (previous != null) {
-            compare(current, previous).forEach(input -> actionManager.handlePlayerInput(player, input));
+            compare(current, previous).forEach(input -> playerInputManager.handlePlayerInput(player, input));
         }
 
         previousInputs.put(player.getUniqueId(), current);
