@@ -3,7 +3,7 @@ package dev.pingui.kombo.manager;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import dev.pingui.kombo.combo.Combo;
-import dev.pingui.kombo.input.Input;
+import dev.pingui.kombo.input.PlayerInput;
 import dev.pingui.kombo.skill.Skill;
 import dev.pingui.kombo.skill.SkillData;
 import org.bukkit.entity.Player;
@@ -22,7 +22,7 @@ public class ComboProgressManager {
         this.skillComboCaches = new ConcurrentHashMap<>();
     }
 
-    public boolean updateProgress(Player player, Skill skill, Input input) {
+    public boolean updateProgress(Player player, Skill skill, PlayerInput input) {
         UUID playerId = player.getUniqueId();
         SkillData data = skill.data();
         Combo combo = data.combo();
@@ -46,8 +46,8 @@ public class ComboProgressManager {
                 .build());
     }
 
-    private InputResult resolveComboStepResult(Input input, Combo combo, ComboStep step) {
-        List<Input> inputs = combo.inputs();
+    private InputResult resolveComboStepResult(PlayerInput input, Combo combo, ComboStep step) {
+        List<PlayerInput> inputs = combo.inputs();
 
         if (step.index() >= inputs.size()) {
             return InputResult.INVALID_INPUT_STRICT;

@@ -1,6 +1,6 @@
 package dev.pingui.kombo.manager;
 
-import dev.pingui.kombo.input.Input;
+import dev.pingui.kombo.input.PlayerInput;
 import dev.pingui.kombo.skill.Skill;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,7 +21,7 @@ public class PlayerInputManager {
         this.comboProgressManager = Objects.requireNonNull(comboProgressManager, "ComboProgressManager cannot be null");
     }
 
-    public void handlePlayerInput(Player player, Input input) {
+    public void handlePlayerInput(Player player, PlayerInput input) {
         Objects.requireNonNull(player, "Player cannot be null");
         Objects.requireNonNull(input, "Input cannot be null");
 

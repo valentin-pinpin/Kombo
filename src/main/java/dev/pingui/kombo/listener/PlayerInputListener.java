@@ -1,9 +1,10 @@
 package dev.pingui.kombo.listener;
 
-import dev.pingui.kombo.input.Input;
+import dev.pingui.kombo.input.PlayerInput;
 import dev.pingui.kombo.input.InputState;
 import dev.pingui.kombo.input.InputType;
 import dev.pingui.kombo.manager.PlayerInputManager;
+import org.bukkit.Input;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -16,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PlayerInputListener implements Listener {
 
     private final PlayerInputManager playerInputManager;
-    private final Map<UUID, org.bukkit.Input> previousInputs;
+    private final Map<UUID, Input> previousInputs;
 
     public PlayerInputListener(PlayerInputManager playerInputManager) {
         this.playerInputManager = Objects.requireNonNull(playerInputManager, "PlayerInputManager cannot be null");
@@ -27,8 +28,8 @@ public class PlayerInputListener implements Listener {
     public void onPlayerInput(PlayerInputEvent event) {
         Player player = event.getPlayer();
 
-        org.bukkit.Input current = event.getInput();
-        org.bukkit.Input previous = previousInputs.get(player.getUniqueId());
+        Input current = event.getInput();
+        Input previous = previousInputs.get(player.getUniqueId());
 
         if (previous != null) {
             compare(current, previous).forEach(input -> playerInputManager.handlePlayerInput(player, input));
@@ -37,15 +38,15 @@ public class PlayerInputListener implements Listener {
         previousInputs.put(player.getUniqueId(), current);
     }
 
-    private static List<Input> compare(org.bukkit.Input current, org.bukkit.Input previous) {
-        List<Input> inputs = new ArrayList<>();
+    private static List<PlayerInput> compare(Input current, Input previous) {
+        List<PlayerInput> inputs = new ArrayList<>();
 
         for (InputType type : InputType.values()) {
             boolean currentState = type.isActive(current);
             boolean previousState = type.isActive(previous);
 
             if (currentState != previousState) {
-                inputs.add(new Input(type, InputState.of(currentState)));
+                inputs.add(new PlayerInput(type, InputState.of(currentState)));
             }
         }
 

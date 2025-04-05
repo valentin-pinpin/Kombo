@@ -1,6 +1,6 @@
 package dev.pingui.kombo.combo;
 
-import dev.pingui.kombo.input.Input;
+import dev.pingui.kombo.input.PlayerInput;
 import dev.pingui.kombo.input.InputState;
 import dev.pingui.kombo.input.InputType;
 
@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Combo {
 
-    private final List<Input> inputs;
+    private final List<PlayerInput> inputs;
     private final long minInputDelay;
     private final long maxInputDelay;
     private final boolean strict;
@@ -42,13 +42,13 @@ public class Combo {
         return strict;
     }
 
-    public List<Input> inputs() {
+    public List<PlayerInput> inputs() {
         return inputs;
     }
 
     public static class Builder {
 
-        private final List<Input> inputs;
+        private final List<PlayerInput> inputs;
         private long minInputDelay;
         private long maxInputDelay;
         private boolean strict;
@@ -68,10 +68,10 @@ public class Combo {
         public Builder input(InputType inputType, InputState inputState) {
             Objects.requireNonNull(inputType, "InputType cannot be null");
             Objects.requireNonNull(inputState, "InputState cannot be null");
-            return input(new Input(inputType, inputState));
+            return input(new PlayerInput(inputType, inputState));
         }
 
-        public Builder input(Input input) {
+        public Builder input(PlayerInput input) {
             Objects.requireNonNull(input, "Input cannot be null");
             inputs.add(input);
             return this;
