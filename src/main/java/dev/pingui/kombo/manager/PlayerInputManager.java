@@ -9,7 +9,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.*;
 import java.util.logging.Level;
 
-public class PlayerInputManager {
+public final class PlayerInputManager {
 
     private final Plugin plugin;
     private final SkillManager skillManager;

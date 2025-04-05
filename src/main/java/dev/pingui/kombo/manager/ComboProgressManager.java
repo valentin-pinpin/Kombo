@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ComboProgressManager {
+public final class ComboProgressManager {
 
     private final Map<String, Cache<UUID, ComboStep>> skillComboCaches;
 

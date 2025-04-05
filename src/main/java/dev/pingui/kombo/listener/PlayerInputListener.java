@@ -14,8 +14,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-@SuppressWarnings("experimental")
-public class PlayerInputListener implements Listener {
+public final class PlayerInputListener implements Listener {
 
     private final PlayerInputManager playerInputManager;
     private final Map<UUID, Input> previousInputs;
