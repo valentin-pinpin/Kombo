@@ -41,8 +41,8 @@ public class PlayerInputListener implements Listener {
         List<Input> inputs = new ArrayList<>();
 
         for (InputType type : InputType.values()) {
-            boolean currentState = type.get(current);
-            boolean previousState = type.get(previous);
+            boolean currentState = type.isActive(current);
+            boolean previousState = type.isActive(previous);
 
             if (currentState != previousState) {
                 inputs.add(new Input(type, InputState.of(currentState)));

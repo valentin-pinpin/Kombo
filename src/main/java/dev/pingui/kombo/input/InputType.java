@@ -31,7 +31,7 @@ public enum InputType {
         return keybind;
     }
 
-    public boolean get(Input input) {
+    public boolean isActive(Input input) {
         return function.apply(input);
     }
 }
