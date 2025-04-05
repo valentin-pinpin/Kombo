@@ -7,20 +7,21 @@ import dev.pingui.kombo.manager.SkillManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Objects;
+public final class Kombo extends JavaPlugin {
 
-public final class KomboPlugin extends JavaPlugin {
-
-    private static KomboPlugin instance;
+    private static Kombo instance;
 
     private SkillManager skillManager;
     private ComboProgressManager comboProgressManager;
     private PlayerInputManager playerInputManager;
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         instance = this;
+    }
 
+    @Override
+    public void onEnable() {
         this.skillManager = new SkillManager();
         this.comboProgressManager = new ComboProgressManager();
         this.playerInputManager = new PlayerInputManager(this, skillManager, comboProgressManager);
@@ -28,8 +29,13 @@ public final class KomboPlugin extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerInputListener(playerInputManager), this);
     }
 
-    public static KomboPlugin inst() {
-        return Objects.requireNonNull(instance, "Kombo has not been initialized yet");
+    @Override
+    public void onDisable() {
+        Bukkit.getScheduler().cancelTasks(this);
+    }
+
+    public static Kombo getInstance() {
+        return instance;
     }
 
     public SkillManager getSkillManager() {
