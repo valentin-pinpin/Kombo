@@ -13,9 +13,9 @@ public final class KomboPlugin extends JavaPlugin {
 
     private static KomboPlugin instance;
 
-    private PlayerInputManager playerInputManager;
     private SkillManager skillManager;
     private ComboProgressManager comboProgressManager;
+    private PlayerInputManager playerInputManager;
 
     @Override
     public void onEnable() {
@@ -32,15 +32,15 @@ public final class KomboPlugin extends JavaPlugin {
         return Objects.requireNonNull(instance, "Kombo has not been initialized yet");
     }
 
-    public PlayerInputManager getPlayerInputManager() {
-        return playerInputManager;
-    }
-
     public SkillManager getSkillManager() {
         return skillManager;
     }
 
     public ComboProgressManager getComboProgressManager() {
         return comboProgressManager;
+    }
+
+    public PlayerInputManager getPlayerInputManager() {
+        return playerInputManager;
     }
 }
