@@ -1,5 +1,7 @@
 package dev.pingui.kombo;
 
+import dev.pingui.kombo.api.KomboAPI;
+import dev.pingui.kombo.api.KomboAPIImpl;
 import dev.pingui.kombo.listener.PlayerInputListener;
 import dev.pingui.kombo.manager.ComboProgressManager;
 import dev.pingui.kombo.manager.PlayerInputManager;
@@ -10,6 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class Kombo extends JavaPlugin {
 
     private static Kombo instance;
+    private static KomboAPI api;
 
     private SkillManager skillManager;
     private ComboProgressManager comboProgressManager;
@@ -18,6 +21,7 @@ public final class Kombo extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
+        api = new KomboAPIImpl(this);
     }
 
     @Override
@@ -36,6 +40,10 @@ public final class Kombo extends JavaPlugin {
 
     public static Kombo getInstance() {
         return instance;
+    }
+
+    public static KomboAPI getAPI() {
+        return api;
     }
 
     public SkillManager getSkillManager() {
