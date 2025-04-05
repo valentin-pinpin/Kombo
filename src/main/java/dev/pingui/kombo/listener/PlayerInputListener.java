@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInputEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,13 +33,20 @@ public class PlayerInputListener implements Listener {
         Input previous = previousInputs.get(player.getUniqueId());
 
         if (previous != null) {
-            compare(current, previous).forEach(input -> playerInputManager.handlePlayerInput(player, input));
+            for (PlayerInput input : getChangedInputs(current, previous)) {
+                playerInputManager.handlePlayerInput(player, input);
+            }
         }
 
         previousInputs.put(player.getUniqueId(), current);
     }
 
-    private static List<PlayerInput> compare(Input current, Input previous) {
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        previousInputs.remove(event.getPlayer().getUniqueId());
+    }
+
+    private static List<PlayerInput> getChangedInputs(Input current, Input previous) {
         List<PlayerInput> inputs = new ArrayList<>();
 
         for (InputType type : InputType.values()) {
