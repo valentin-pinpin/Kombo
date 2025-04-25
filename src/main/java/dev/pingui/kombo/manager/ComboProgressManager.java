@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import dev.pingui.kombo.combo.Combo;
 import dev.pingui.kombo.combo.ComboStep;
 import dev.pingui.kombo.combo.InputResult;
+import dev.pingui.kombo.input.ComboInput;
 import dev.pingui.kombo.input.PlayerInput;
 import dev.pingui.kombo.skill.Skill;
 import dev.pingui.kombo.skill.SkillData;
@@ -49,13 +50,13 @@ public final class ComboProgressManager {
     }
 
     private InputResult resolveComboStepResult(PlayerInput input, Combo combo, ComboStep step) {
-        List<PlayerInput> inputs = combo.inputs();
+        List<ComboInput> inputs = combo.inputs();
 
         if (step.index() >= inputs.size()) {
             return InputResult.INPUT_INVALID_STRICT;
         }
 
-        if (!inputs.get(step.index()).equals(input)) {
+        if (!inputs.get(step.index()).matches(input)) {
             return combo.strict() ? InputResult.INPUT_INVALID_STRICT : InputResult.INPUT_INVALID;
         }
 
