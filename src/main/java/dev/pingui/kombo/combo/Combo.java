@@ -60,15 +60,12 @@ public class Combo {
             this.strict = false;
         }
 
-        public Builder input(InputType inputType) {
-            return input(inputType, InputState.PRESSED)
-                    .input(inputType, InputState.RELEASED);
+        public Builder input(InputType type, InputState state) {
+            return input(type, state, minInputDelay, maxInputDelay);
         }
 
-        public Builder input(InputType type, InputState state) {
-            Objects.requireNonNull(type, "Input type cannot be null");
-            Objects.requireNonNull(state, "Input state cannot be null");
-            return input(new ComboInput(type, state, minInputDelay, maxInputDelay));
+        public Builder input(InputType type, InputState state, long minDelay, long maxDelay) {
+            return input(new ComboInput(type, state, minDelay, maxDelay));
         }
 
         public Builder input(ComboInput input) {
