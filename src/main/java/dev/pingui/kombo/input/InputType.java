@@ -13,7 +13,7 @@ public enum InputType {
     JUMP("key.jump", Input::isJump),
     SNEAK("key.sneak", Input::isSneak),
     SPRINT("key.sprint", Input::isSprint),
-    UNKNOWN("key.none");
+    NONE("key.none");
 
     private final String keybind;
     private final Function<Input, Boolean> function;

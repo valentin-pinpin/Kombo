@@ -9,4 +9,8 @@ public interface Input {
     default boolean matches(Input input) {
         return this.type() == input.type() && this.state() == input.state();
     }
+
+    default boolean isEmpty() {
+        return this.type() == InputType.NONE && this.state() == InputState.NONE;
+    }
 }

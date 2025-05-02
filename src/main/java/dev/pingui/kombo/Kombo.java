@@ -1,7 +1,7 @@
 package dev.pingui.kombo;
 
 import dev.pingui.kombo.listener.PlayerInputListener;
-import dev.pingui.kombo.manager.ComboProgressManager;
+import dev.pingui.kombo.manager.ComboPlayerManager;
 import dev.pingui.kombo.manager.PlayerInputManager;
 import dev.pingui.kombo.manager.SkillManager;
 import org.bukkit.Bukkit;
@@ -12,7 +12,7 @@ public final class Kombo extends JavaPlugin {
     private static Kombo instance;
 
     private SkillManager skillManager;
-    private ComboProgressManager comboProgressManager;
+    private ComboPlayerManager playerManager;
     private PlayerInputManager playerInputManager;
 
     @Override
@@ -23,8 +23,8 @@ public final class Kombo extends JavaPlugin {
     @Override
     public void onEnable() {
         this.skillManager = new SkillManager();
-        this.comboProgressManager = new ComboProgressManager();
-        this.playerInputManager = new PlayerInputManager(this, skillManager, comboProgressManager);
+        this.playerManager = new ComboPlayerManager();
+        this.playerInputManager = new PlayerInputManager(this, skillManager, playerManager);
 
         Bukkit.getPluginManager().registerEvents(new PlayerInputListener(playerInputManager), this);
     }
@@ -42,8 +42,8 @@ public final class Kombo extends JavaPlugin {
         return skillManager;
     }
 
-    public ComboProgressManager getComboProgressManager() {
-        return comboProgressManager;
+    public ComboPlayerManager getPlayerManager() {
+        return playerManager;
     }
 
     public PlayerInputManager getPlayerInputManager() {
