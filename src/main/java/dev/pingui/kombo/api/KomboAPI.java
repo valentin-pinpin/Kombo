@@ -1,8 +1,11 @@
 package dev.pingui.kombo.api;
 
+import dev.pingui.kombo.Kombo;
 import dev.pingui.kombo.skill.Skill;
 
-public interface KomboAPI {
+public final class KomboAPI {
 
-    void registerSkill(Skill skill);
+    public static void registerSkill(Skill skill) {
+        Kombo.getInstance().getSkillManager().addSkill(skill);
+    }
 }
