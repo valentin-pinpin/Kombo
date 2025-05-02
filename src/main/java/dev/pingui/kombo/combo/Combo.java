@@ -61,7 +61,7 @@ public class Combo {
         }
 
         public Builder input(InputType type, InputState state) {
-            return input(type, state, minInputDelay, maxInputDelay);
+            return input(type, state, 0, Long.MAX_VALUE);
         }
 
         public Builder input(InputType type, InputState state, long minDelay, long maxDelay) {
