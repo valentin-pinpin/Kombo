@@ -4,8 +4,6 @@ import org.bukkit.entity.Player;
 
 public interface Skill {
 
-    SkillData data();
-
     default boolean canPerform(Player player) {
         return true;
     }
