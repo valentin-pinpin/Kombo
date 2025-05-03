@@ -9,12 +9,12 @@ public class ComboSession {
 
     private final Combo combo;
     private int index;
-    private PlayerInput lastInput;
+    private PlayerInput lastValidInput;
 
     public ComboSession(Combo combo) {
         this.combo = combo;
         this.index = 0;
-        this.lastInput = PlayerInput.EMPTY;
+        this.lastValidInput = PlayerInput.EMPTY;
     }
 
     public Combo getCombo() {
@@ -25,8 +25,8 @@ public class ComboSession {
         return index;
     }
 
-    public PlayerInput getLastInput() {
-        return lastInput;
+    public PlayerInput getLastValidInput() {
+        return lastValidInput;
     }
 
     private ComboResult processInput(PlayerInput input) {
@@ -37,19 +37,26 @@ public class ComboSession {
         }
 
         ComboInput expected = inputs.get(index);
-        long elapsed = input.timestamp() - lastInput.timestamp();
+        boolean hasPrevious = !lastValidInput.isEmpty();
+        boolean matches = expected.matches(input);
 
-        if (elapsed > expected.maxDelay()) {
-            return ComboResult.EXPIRED;
+        if (!matches && combo.strict()) {
+            return ComboResult.MISMATCH_STRICT;
         }
 
-        if (!expected.matches(input)) {
-            return combo.strict() ? ComboResult.MISMATCH_STRICT : ComboResult.INVALID_INPUT;
+        if (hasPrevious) {
+            long elapsed = input.timestamp() - lastValidInput.timestamp();
+
+            if (elapsed > expected.maxDelay()) {
+                return ComboResult.EXPIRED;
+            }
+            if (elapsed < expected.minDelay()) {
+                return ComboResult.PREMATURE;
+            }
         }
 
-        if (!lastInput.isEmpty()
-                && elapsed < expected.minDelay()) {
-            return ComboResult.PREMATURE;
+        if (!matches) {
+            return ComboResult.INVALID_INPUT;
         }
 
         return index + 1 >= inputs.size() ? ComboResult.COMPLETED : ComboResult.ADVANCED;
@@ -61,16 +68,14 @@ public class ComboSession {
         switch (result) {
             case ADVANCED -> {
                 index++;
-                lastInput = input;
+                lastValidInput = input;
             }
-            case EXPIRED, MISMATCH_STRICT, COMPLETED -> reset();
+            case EXPIRED, MISMATCH_STRICT, COMPLETED -> {
+                index = 0;
+                lastValidInput = PlayerInput.EMPTY;
+            }
         }
 
         return result;
-    }
-
-    public void reset() {
-        index = 0;
-        lastInput = PlayerInput.EMPTY;
     }
 }
