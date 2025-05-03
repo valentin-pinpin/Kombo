@@ -1,9 +1,10 @@
 package dev.pingui.kombo.manager;
 
 import dev.pingui.kombo.combo.ComboPlayer;
-import dev.pingui.kombo.combo.ComboResult;
 import dev.pingui.kombo.input.PlayerInput;
 import dev.pingui.kombo.skill.Skill;
+import dev.pingui.kombo.skill.SkillData;
+import dev.pingui.kombo.skill.SkillEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -30,30 +31,29 @@ public final class PlayerInputManager {
         ComboPlayer comboPlayer = playerManager.get(player);
 
         skillManager.skills().stream()
-                .filter(skill -> hasPermission(player, skill))
-                .filter(skill -> comboCompleted(comboPlayer, skill, input))
-                .filter(skill -> canPerform(player, skill))
-                .sorted(Comparator.comparingInt(skill -> skill.data().priority()))
-                .forEach(skill -> executeSkill(player, skill));
+                .filter(skillEntry -> hasPermission(player, skillEntry.data()))
+                .filter(skillEntry -> comboCompleted(comboPlayer, skillEntry.data(), input))
+                .filter(skillEntry -> canPerform(player, skillEntry.skill()))
+                .max(Comparator.comparingInt(skillEntry -> skillEntry.data().priority()))
+                .ifPresent(skillEntry -> executeSkill(player, skillEntry));
     }
 
-    public void executeSkill(Player player, Skill skill) {
+    public void executeSkill(Player player, SkillEntry skillEntry) {
         Bukkit.getScheduler().runTask(plugin, () -> {
             try {
-                skill.perform(player);
+                skillEntry.skill().perform(player);
             } catch (Exception e) {
-                plugin.getLogger().log(Level.SEVERE, "Error executing skill " + skill.data().id() + " for player " + player.getName(), e);
+                plugin.getLogger().log(Level.SEVERE, "Error executing skill " + skillEntry.data().id() + " for player " + player.getName(), e);
             }
         });
     }
 
-    public boolean hasPermission(Player player, Skill skill) {
-        return player.hasPermission(skill.data().permission());
+    public boolean hasPermission(Player player, SkillData data) {
+        return player.hasPermission(data.permission());
     }
 
-    public boolean comboCompleted(ComboPlayer comboPlayer, Skill skill, PlayerInput input) {
-        ComboResult result = comboPlayer.applyInput(skill.data(), input);
-        return result.isCompleted();
+    public boolean comboCompleted(ComboPlayer comboPlayer, SkillData data, PlayerInput input) {
+        return comboPlayer.applyInput(data, input).isCompleted();
     }
 
     public boolean canPerform(Player player, Skill skill) {

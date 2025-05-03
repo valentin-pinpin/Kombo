@@ -44,9 +44,7 @@ public class ComboSession {
         }
 
         if (!expected.matches(input)) {
-            return combo.strict()
-                    ? ComboResult.MISMATCH_STRICT
-                    : ComboResult.INVALID_INPUT;
+            return combo.strict() ? ComboResult.MISMATCH_STRICT : ComboResult.INVALID_INPUT;
         }
 
         if (!lastInput.isEmpty()
@@ -54,9 +52,7 @@ public class ComboSession {
             return ComboResult.PREMATURE;
         }
 
-        return index + 1 >= inputs.size()
-                ? ComboResult.COMPLETED
-                : ComboResult.ADVANCED;
+        return index + 1 >= inputs.size() ? ComboResult.COMPLETED : ComboResult.ADVANCED;
     }
 
     public ComboResult applyInput(PlayerInput input) {
