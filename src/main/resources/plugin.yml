@@ -1,5 +1,5 @@
 name: Kombo
 version: '${project.version}'
-main: dev.pingui.kombo.KomboPlugin
+main: dev.pingui.kombo.Kombo
 author: Pingui
 api-version: '1.21'
